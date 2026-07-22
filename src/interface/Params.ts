@@ -1,4 +1,4 @@
-import ParamNames from '../enum/ParamNames';
+import { ParamNames } from '../enum/ParamNames';
 
 export interface Expression {
   type: ParamNames;

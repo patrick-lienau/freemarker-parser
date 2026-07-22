@@ -1,4 +1,4 @@
-enum ParamNames {
+export enum ParamNames {
   Compound = 'Compound',
   Identifier = 'Identifier',
   MemberExpression = 'MemberExpression',
@@ -13,5 +13,3 @@ enum ParamNames {
   BuiltInExpression = 'BuiltInExpression',
   UpdateExpression = 'UpdateExpression',
 }
-
-export default ParamNames;

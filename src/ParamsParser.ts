@@ -8,7 +8,7 @@ import {
   maxBinaryOps,
   maxUnaryOps,
 } from './enum/Operators';
-import ParamNames from './enum/ParamNames';
+import { ParamNames } from './enum/ParamNames';
 import ParseError from './errors/ParseError';
 import {
   AllParamTypes,

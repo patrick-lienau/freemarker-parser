@@ -1,5 +1,5 @@
 import { NodeTypes } from '../enum/NodeTypes';
-import ParamNames from '../enum/ParamNames';
+import { ParamNames } from '../enum/ParamNames';
 import { AllParamTypes, Expression } from '../interface/Params';
 import { Token } from '../interface/Tokens';
 import AbstractAssign from './abstract/AbstractAssign';

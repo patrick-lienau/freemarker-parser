@@ -1,5 +1,5 @@
 import { Operators } from '../src/enum/Operators';
-import ParamNames from '../src/enum/ParamNames';
+import { ParamNames } from '../src/enum/ParamNames';
 import { ParamsParser } from '../src/ParamsParser';
 import { AllParamTypes } from '../src/interface/Params';
 

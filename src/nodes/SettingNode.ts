@@ -1,5 +1,5 @@
 import { NodeTypes } from '../enum/NodeTypes';
-import ParamNames from '../enum/ParamNames';
+import { ParamNames } from '../enum/ParamNames';
 import ParseError from '../errors/ParseError';
 import { AssignmentExpression } from '../interface/Params';
 import { Token } from '../interface/Tokens';
