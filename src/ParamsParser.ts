@@ -244,6 +244,90 @@ export class ParamsParser extends AbstractTokenizer {
   }
 
   /**
+   * Parse a primary token plus any postfix operators that bind TIGHTER than a
+   * prefix unary operator: builtins (`?upper_case`), the exists test (`??`),
+   * and the bare/binary default operator (`!` / `!default`). Used only for the
+   * operand of a prefix unary so that `!x??` parses as `!(x??)` and
+   * `!x?has_content` as `!(x?has_content)`, matching FreeMarker precedence
+   * (postfix `?`/`??` outrank prefix `!`).
+   */
+  protected parsePostfixChain(): AllParamTypes | null {
+    let node = this.parseToken();
+    if (!node) {
+      return node;
+    }
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      const save = this.index;
+      const op = this.parseBinaryOp();
+      if (op === Operators.BUILT_IN) {
+        const name = this.parseToken();
+        if (!name) {
+          this.index = save;
+          break;
+        }
+        node = createBinaryExpression(op, node, name);
+      } else if (op === Operators.EXISTS) {
+        node = createUnaryExpression(op, node, false);
+      } else if (op === Operators.EXCLAM) {
+        const def = this.parseToken();
+        node = def
+          ? createBinaryExpression(op, node, def)
+          : createUnaryExpression(op, node, false);
+      } else {
+        // Not a tighter-than-prefix postfix operator — restore and stop.
+        this.index = save;
+        break;
+      }
+    }
+    return node;
+  }
+
+  /**
+   * Consume the precedence-0 postfix operators that can trail ANY operand of a
+   * binary expression — the exists test (`x??`), the bare/binary default
+   * operator (`x!` / `x!def`), and postfix update (`x++` / `x--`). These have no
+   * usable binary precedence, so the precedence stack cannot place them; they
+   * must be attached to their operand as it is read (at any position in the
+   * chain, not just the leftmost). `?builtin` is intentionally excluded — it has
+   * real binary precedence and is left-associated by the stack.
+   */
+  protected consumePostfixUnaries(
+    node: AllParamTypes | null,
+  ): AllParamTypes | null {
+    if (!node) {
+      return node;
+    }
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      const save = this.index;
+      const op = this.parseBinaryOp();
+      if (
+        op === Operators.PLUS_PLUS ||
+        op === Operators.MINUS_MINUS ||
+        op === Operators.EXISTS
+      ) {
+        node = createUnaryExpression(op, node, false);
+      } else if (op === Operators.EXCLAM) {
+        const defSave = this.index;
+        const def = this.parseToken();
+        if (def) {
+          node = createBinaryExpression(op, node, def);
+        } else {
+          this.index = defSave;
+          node = createUnaryExpression(op, node, false);
+        }
+      } else {
+        // Not a precedence-0 postfix operator — restore and let the caller's
+        // binary-precedence stack handle it (`?builtin`, `+`, `&&`, …).
+        this.index = save;
+        break;
+      }
+    }
+    return node;
+  }
+
+  /**
    * This function is responsible for gobbling an individual expression,
    * e.g. `1`, `1+2`, `a+(b*2)-Math.sqrt(2)`
    */
@@ -303,7 +387,14 @@ export class ParamsParser extends AbstractTokenizer {
       prec: binaryPrecedence(biop),
     };
 
-    right = this.parseToken();
+    // Operands other than the leftmost still carry their own precedence-0
+    // postfix operators (`b??`, `b!`, `b!def`). Consume them here — plain
+    // parseToken() would leave a trailing `??`, whose binary precedence is 0, to
+    // desync the stream (`x && a?? && b` → "Expected expression after &&").
+    // `?builtin` is deliberately NOT consumed here: it has real binary
+    // precedence and must flow through the stack below to stay left-associative
+    // (`a?b?c` = `(a?b)?c`, not `a?(b?c)`).
+    right = this.consumePostfixUnaries(this.parseToken());
     if (!right || !left) {
       throw new ParseError(`Expected expression after ${biop}`, {
         start: this.index,
@@ -346,7 +437,7 @@ export class ParamsParser extends AbstractTokenizer {
         stack.push(node);
       }
 
-      node = this.parseToken();
+      node = this.consumePostfixUnaries(this.parseToken());
       if (!node) {
         throw new ParseError(`Expected expression after ${biop}`, {
           start: this.index,
@@ -417,7 +508,9 @@ export class ParamsParser extends AbstractTokenizer {
       while (tcLen > 0) {
         if (toCheck in UnaryOps) {
           this.index += tcLen;
-          return createUnaryExpression(toCheck, this.parseToken(), true);
+          // The operand gobbles its own postfix `?`/`??`/`!` chain first, so a
+          // prefix unary (`!x??`) binds looser than those postfix operators.
+          return createUnaryExpression(toCheck, this.parsePostfixChain(), true);
         }
         toCheck = toCheck.substr(0, --tcLen);
       }

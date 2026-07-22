@@ -224,6 +224,87 @@ describe('params parser', () => {
     });
   });
 
+  it('postfix ?? binds tighter than prefix logical-NOT', () => {
+    // `!foo??` means `!(foo??)` — "foo is missing" — not `(!foo)??`.
+    const result = parse('!foo??');
+    expect(result).toStrictEqual({
+      type: ParamNames.UnaryExpression,
+      operator: Operators.EXCLAM,
+      prefix: true,
+      argument: {
+        type: ParamNames.UnaryExpression,
+        operator: Operators.EXISTS,
+        prefix: false,
+        argument: { type: ParamNames.Identifier, name: 'foo' },
+      },
+    });
+  });
+
+  it('postfix builtin binds tighter than prefix logical-NOT', () => {
+    // `!foo?has_content` means `!(foo?has_content)`, not `(!foo)?has_content`.
+    const result = parse('!foo?has_content');
+    expect(result).toStrictEqual({
+      type: ParamNames.UnaryExpression,
+      operator: Operators.EXCLAM,
+      prefix: true,
+      argument: {
+        type: ParamNames.BuiltInExpression,
+        operator: Operators.BUILT_IN,
+        left: { type: ParamNames.Identifier, name: 'foo' },
+        right: { type: ParamNames.Identifier, name: 'has_content' },
+      },
+    });
+  });
+
+  it('postfix ?? / builtin on a non-leftmost operand of a && chain', () => {
+    // Regression: only the leftmost operand used to get postfix handling, so a
+    // trailing `??` on a middle operand (binary precedence 0) desynced the
+    // stream and threw "Expected expression after &&".
+    const result = parse('a?? && b?has_content && c');
+    expect(result).toStrictEqual({
+      type: ParamNames.LogicalExpression,
+      operator: Operators.AND,
+      left: {
+        type: ParamNames.LogicalExpression,
+        operator: Operators.AND,
+        left: {
+          type: ParamNames.UnaryExpression,
+          operator: Operators.EXISTS,
+          prefix: false,
+          argument: { type: ParamNames.Identifier, name: 'a' },
+        },
+        right: {
+          type: ParamNames.BuiltInExpression,
+          operator: Operators.BUILT_IN,
+          left: { type: ParamNames.Identifier, name: 'b' },
+          right: { type: ParamNames.Identifier, name: 'has_content' },
+        },
+      },
+      right: { type: ParamNames.Identifier, name: 'c' },
+    });
+  });
+
+  it('postfix ?? on a middle operand does not desync the parser', () => {
+    // `x && a?? && b` previously threw; the `??` must attach to `a`.
+    const result = parse('x && a?? && b');
+    expect(result).toStrictEqual({
+      type: ParamNames.LogicalExpression,
+      operator: Operators.AND,
+      left: {
+        type: ParamNames.LogicalExpression,
+        operator: Operators.AND,
+        left: { type: ParamNames.Identifier, name: 'x' },
+        right: {
+          type: ParamNames.UnaryExpression,
+          operator: Operators.EXISTS,
+          prefix: false,
+          argument: { type: ParamNames.Identifier, name: 'a' },
+        },
+      },
+      right: { type: ParamNames.Identifier, name: 'b' },
+    });
+  });
+
   it('special variable reference', () => {
     const result = parse('.data_model');
     expect(result).toStrictEqual({
