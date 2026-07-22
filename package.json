@@ -1,6 +1,9 @@
 {
-  "name": "freemarker-parser",
+  "name": "@neptune/freemarker-parser",
   "version": "1.3.0",
+  "publishConfig": {
+    "registry": "https://npm.thirdwavellc.com/repository/thirdwave-npm/"
+  },
   "description": "Freemarker Parser is a javascript implementation of the Freemarker",
   "scripts": {
     "build": "tsc -b",
