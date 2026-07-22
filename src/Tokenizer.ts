@@ -294,6 +294,21 @@ export class Tokenizer extends AbstractTokenizer {
     while (this.index <= this.length) {
       const ch = this.charCodeAt(this.index);
 
+      // Terminator check first, but only when not inside a nested
+      // quote/paren/bracket. In square-bracket mode the tag terminator is `]`
+      // (or `/]`), which is also the expression bracket-close char; checking
+      // the end tag before the delimiter switch means an un-nested `]` ends the
+      // tag instead of being mistaken for a stray close and throwing
+      // "To many close tags". While inside a real `[...]` (array/index),
+      // closeCode is set, so this is skipped and the `]` balances normally.
+      if (!closeCode) {
+        const nextPos = this.getNextPos(endTags);
+        if (nextPos.pos !== -1 && this.index === nextPos.pos) {
+          this.index += nextPos.text.length;
+          return { paramText, endToken: nextPos.text };
+        }
+      }
+
       if (
         closeCode !== ECharCodes.DoubleQuote &&
         closeCode !== ECharCodes.SingleQuote
@@ -340,19 +355,8 @@ export class Tokenizer extends AbstractTokenizer {
         }
       }
 
-      if (!closeCode) {
-        const nextPos = this.getNextPos(endTags);
-        if (nextPos.pos !== -1 && this.index === nextPos.pos) {
-          this.index += nextPos.text.length;
-          return { paramText, endToken: nextPos.text };
-        } else {
-          paramText += this.charAt(this.index);
-          ++this.index;
-        }
-      } else {
-        paramText += this.charAt(this.index);
-        ++this.index;
-      }
+      paramText += this.charAt(this.index);
+      ++this.index;
     }
     if (closeCode) {
       throw new ParseError(
