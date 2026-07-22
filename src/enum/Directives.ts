@@ -28,7 +28,7 @@ export enum Directives {
   macro = NodeTypes.Macro,
   outputFormat = NodeTypes.OutputFormat,
   outputformat = NodeTypes.OutputFormat,
-  // nested = NodeTypes.Nested, // TODO: unsupported
+  nested = NodeTypes.Nested,
   nt = NodeTypes.Nt,
   recover = NodeTypes.Recover,
   // recurse = NodeTypes.Recurse, // TODO: unsupported

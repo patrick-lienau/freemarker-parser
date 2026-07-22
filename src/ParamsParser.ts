@@ -262,13 +262,32 @@ export class ParamsParser extends AbstractTokenizer {
     left = this.parseToken();
     biop = this.parseBinaryOp();
 
-    // If the operator is a unary operator, create a unary expression with the leftmost thing
-    if (
+    // Handle postfix operators before the precedence stack:
+    //   `foo++` / `foo--`  -> postfix update
+    //   `foo??`            -> exists test (postfix)
+    //   `foo!` / `foo!def` -> default-value operator. Bare (`foo!`) is a
+    //                         postfix unary; with a right operand (`foo!def`)
+    //                         it is a binary expression. Prefix logical-NOT
+    //                         (`!foo`) is consumed earlier by parseToken(), so
+    //                         any `!` seen here is always the default operator.
+    while (
       biop === Operators.PLUS_PLUS ||
       biop === Operators.MINUS_MINUS ||
-      biop === Operators.EXISTS
+      biop === Operators.EXISTS ||
+      biop === Operators.EXCLAM
     ) {
-      left = createUnaryExpression(biop, left, false);
+      if (biop === Operators.EXCLAM) {
+        const save = this.index;
+        const def = this.parseToken();
+        if (def) {
+          left = createBinaryExpression(biop, left as AllParamTypes, def);
+        } else {
+          this.index = save;
+          left = createUnaryExpression(biop, left, false);
+        }
+      } else {
+        left = createUnaryExpression(biop, left, false);
+      }
       biop = this.parseBinaryOp();
     }
 
@@ -372,9 +391,15 @@ export class ParamsParser extends AbstractTokenizer {
     this.parseSpaces();
     const ch = this.charCodeAt(this.index);
 
-    if (isDecimalDigit(ch) || ch === ECharCodes.Period) {
-      // Char code 46 is a dot `.` which can start off a numeric literal
+    if (isDecimalDigit(ch)) {
       return this.parseNumericLiteral();
+    } else if (ch === ECharCodes.Period) {
+      // A dot can start a numeric literal (`.5`) or a special-variable
+      // reference (`.now`, `.vars`, `.data_model`, `.lang`, …).
+      if (isDecimalDigit(this.charCodeAt(this.index + 1))) {
+        return this.parseNumericLiteral();
+      }
+      return this.parseVariable();
     } else if (ch === ECharCodes.SingleQuote || ch === ECharCodes.DoubleQuote) {
       // Single or double quotes
       return this.parseStringLiteral();
@@ -487,8 +512,16 @@ export class ParamsParser extends AbstractTokenizer {
    * (e.g. `true`, `false`, `null`) or `this`
    */
   protected parseIdentifier(): Identifier | Literal {
-    let ch = this.charCodeAt(this.index);
     const start = this.index;
+
+    // Special-variable reference: a leading dot (`.now`, `.data_model`, …).
+    // The member-access loop in parseVariable() consumes its own `.` before
+    // calling us, so a leading dot only appears here for a special variable.
+    if (this.charCodeAt(this.index) === ECharCodes.Period) {
+      this.index++;
+    }
+
+    let ch = this.charCodeAt(this.index);
 
     if (isIdentifierStart(ch)) {
       this.index++;

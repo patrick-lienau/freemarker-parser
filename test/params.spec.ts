@@ -170,6 +170,87 @@ describe('params parser', () => {
     expect(result).toStrictEqual(expected);
   });
 
+  it('default-value operator (binary)', () => {
+    const result = parse('foo!"bar"');
+    expect(result).toStrictEqual({
+      type: ParamNames.BinaryExpression,
+      operator: Operators.EXCLAM,
+      left: { type: ParamNames.Identifier, name: 'foo' },
+      right: { type: ParamNames.Literal, value: 'bar', raw: '"bar"' },
+    });
+  });
+
+  it('default-value operator on a call expression', () => {
+    const result = parse('avg()!"N/A"');
+    expect(result).toStrictEqual({
+      type: ParamNames.BinaryExpression,
+      operator: Operators.EXCLAM,
+      left: {
+        type: ParamNames.CallExpression,
+        arguments: [],
+        callee: { type: ParamNames.Identifier, name: 'avg' },
+      },
+      right: { type: ParamNames.Literal, value: 'N/A', raw: '"N/A"' },
+    });
+  });
+
+  it('default-value operator (bare / postfix)', () => {
+    const result = parse('foo!');
+    expect(result).toStrictEqual({
+      type: ParamNames.UnaryExpression,
+      operator: Operators.EXCLAM,
+      prefix: false,
+      argument: { type: ParamNames.Identifier, name: 'foo' },
+    });
+  });
+
+  it('prefix logical-NOT is unaffected by the default operator', () => {
+    const result = parse('!foo');
+    expect(result).toStrictEqual({
+      type: ParamNames.UnaryExpression,
+      operator: Operators.EXCLAM,
+      prefix: true,
+      argument: { type: ParamNames.Identifier, name: 'foo' },
+    });
+  });
+
+  it('not-equals still wins over the default operator (longest match)', () => {
+    const result = parse('a != b');
+    expect(result).toStrictEqual({
+      type: ParamNames.BinaryExpression,
+      operator: Operators.NOT_EQUALS,
+      left: { type: ParamNames.Identifier, name: 'a' },
+      right: { type: ParamNames.Identifier, name: 'b' },
+    });
+  });
+
+  it('special variable reference', () => {
+    const result = parse('.data_model');
+    expect(result).toStrictEqual({
+      type: ParamNames.Identifier,
+      name: '.data_model',
+    });
+  });
+
+  it('special variable with member access', () => {
+    const result = parse('.vars["x"]');
+    expect(result).toStrictEqual({
+      type: ParamNames.MemberExpression,
+      computed: true,
+      object: { type: ParamNames.Identifier, name: '.vars' },
+      property: { type: ParamNames.Literal, value: 'x', raw: '"x"' },
+    });
+  });
+
+  it('leading-dot numeric literal is still a number', () => {
+    const result = parse('.5');
+    expect(result).toStrictEqual({
+      type: ParamNames.Literal,
+      value: 0.5,
+      raw: '.5',
+    });
+  });
+
   it('to string', () => {
     const result = parse('foo?string("yes")');
     const expected = {

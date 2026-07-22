@@ -86,6 +86,11 @@ export const BinaryOps: Record<string, number> = {
   [Operators.PLUS_PLUS]: 0,
   [Operators.MINUS_MINUS]: 0,
   [Operators.EXISTS]: 0,
+  // Default-value operator `!` (`expr!`, `expr!default`). Registered so
+  // parseBinaryOp() recognizes it; it is intercepted as a postfix/default
+  // operator in parseBinaryExpression before the precedence stack, so this
+  // precedence value is never actually consumed by the reducer.
+  [Operators.EXCLAM]: 12,
 
   // Logical OR
   [Operators.OR]: 1,

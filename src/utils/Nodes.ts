@@ -23,6 +23,7 @@ import LocalNode from '../nodes/LocalNode';
 import LtNode from '../nodes/LtNode';
 import MacroCallNode from '../nodes/MacroCallNode';
 import MacroNode from '../nodes/MacroNode';
+import NestedNode from '../nodes/NestedNode';
 import NoAutoEscNode from '../nodes/NoAutoEscNode';
 import NoEscapeNode from '../nodes/NoEscapeNode';
 import NtNode from '../nodes/NtNode';
@@ -115,6 +116,9 @@ const Nodes: NodeSelector = {
   },
   [NodeTypes.Return](token: Token): ReturnNode {
     return new ReturnNode(token);
+  },
+  [NodeTypes.Nested](token: Token): NestedNode {
+    return new NestedNode(token);
   },
   [NodeTypes.Attempt](token: Token): AttemptNode {
     return new AttemptNode(token);

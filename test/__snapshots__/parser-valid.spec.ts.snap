@@ -12205,27 +12205,21 @@ ProgramNode {
         },
       },
       "params": Object {
-        "body": Array [
-          Object {
-            "arguments": Array [],
-            "callee": Object {
-              "name": "avg",
-              "type": "Identifier",
-            },
-            "type": "CallExpression",
+        "left": Object {
+          "arguments": Array [],
+          "callee": Object {
+            "name": "avg",
+            "type": "Identifier",
           },
-          Object {
-            "argument": Object {
-              "raw": "\\"N/A\\"",
-              "type": "Literal",
-              "value": "N/A",
-            },
-            "operator": "!",
-            "prefix": true,
-            "type": "UnaryExpression",
-          },
-        ],
-        "type": "Compound",
+          "type": "CallExpression",
+        },
+        "operator": "!",
+        "right": Object {
+          "raw": "\\"N/A\\"",
+          "type": "Literal",
+          "value": "N/A",
+        },
+        "type": "BinaryExpression",
       },
       "start": 222,
       "type": "Interpolation",
@@ -13243,23 +13237,17 @@ ProgramNode {
             },
           },
           "params": Object {
-            "body": Array [
-              Object {
-                "name": "missing",
-                "type": "Identifier",
-              },
-              Object {
-                "argument": Object {
-                  "raw": "'d'",
-                  "type": "Literal",
-                  "value": "d",
-                },
-                "operator": "!",
-                "prefix": true,
-                "type": "UnaryExpression",
-              },
-            ],
-            "type": "Compound",
+            "left": Object {
+              "name": "missing",
+              "type": "Identifier",
+            },
+            "operator": "!",
+            "right": Object {
+              "raw": "'d'",
+              "type": "Literal",
+              "value": "d",
+            },
+            "type": "BinaryExpression",
           },
           "start": 84,
           "type": "Interpolation",
@@ -14691,23 +14679,17 @@ ProgramNode {
             },
           },
           "params": Object {
-            "body": Array [
-              Object {
-                "name": "missing",
-                "type": "Identifier",
-              },
-              Object {
-                "argument": Object {
-                  "raw": "'d'",
-                  "type": "Literal",
-                  "value": "d",
-                },
-                "operator": "!",
-                "prefix": true,
-                "type": "UnaryExpression",
-              },
-            ],
-            "type": "Compound",
+            "left": Object {
+              "name": "missing",
+              "type": "Identifier",
+            },
+            "operator": "!",
+            "right": Object {
+              "raw": "'d'",
+              "type": "Literal",
+              "value": "d",
+            },
+            "type": "BinaryExpression",
           },
           "start": 817,
           "type": "Interpolation",
@@ -22614,6 +22596,458 @@ Array [
     "endTag": undefined,
     "params": undefined,
     "start": 107,
+    "startTag": undefined,
+    "text": "
+",
+    "type": "Text",
+  },
+]
+`;
+
+exports[`nested.ftl should have correct ast 1`] = `
+ProgramNode {
+  "body": Array [
+    MacroNode {
+      "body": Array [
+        TextNode {
+          "end": 32,
+          "loc": Object {
+            "end": Object {
+              "column": 20,
+              "line": 2,
+            },
+            "start": Object {
+              "column": 13,
+              "line": 1,
+            },
+          },
+          "start": 12,
+          "text": "
+  <div class=\\"box\\">",
+          "type": "Text",
+        },
+        NestedNode {
+          "end": 41,
+          "loc": Object {
+            "end": Object {
+              "column": 29,
+              "line": 2,
+            },
+            "start": Object {
+              "column": 20,
+              "line": 2,
+            },
+          },
+          "params": undefined,
+          "start": 32,
+          "type": "Nested",
+        },
+        TextNode {
+          "end": 48,
+          "loc": Object {
+            "end": Object {
+              "column": 1,
+              "line": 3,
+            },
+            "start": Object {
+              "column": 29,
+              "line": 2,
+            },
+          },
+          "start": 41,
+          "text": "</div>
+",
+          "type": "Text",
+        },
+      ],
+      "end": 12,
+      "loc": Object {
+        "end": Object {
+          "column": 13,
+          "line": 1,
+        },
+        "start": Object {
+          "column": 1,
+          "line": 1,
+        },
+      },
+      "params": Object {
+        "name": "box",
+        "type": "Identifier",
+      },
+      "start": 0,
+      "type": "Macro",
+    },
+    TextNode {
+      "end": 59,
+      "loc": Object {
+        "end": Object {
+          "column": 1,
+          "line": 5,
+        },
+        "start": Object {
+          "column": 10,
+          "line": 3,
+        },
+      },
+      "start": 57,
+      "text": "
+
+",
+      "type": "Text",
+    },
+    MacroNode {
+      "body": Array [
+        TextNode {
+          "end": 81,
+          "loc": Object {
+            "end": Object {
+              "column": 3,
+              "line": 6,
+            },
+            "start": Object {
+              "column": 20,
+              "line": 5,
+            },
+          },
+          "start": 78,
+          "text": "
+  ",
+          "type": "Text",
+        },
+        ListNode {
+          "body": Array [
+            TextNode {
+              "end": 107,
+              "loc": Object {
+                "end": Object {
+                  "column": 5,
+                  "line": 7,
+                },
+                "start": Object {
+                  "column": 24,
+                  "line": 6,
+                },
+              },
+              "start": 102,
+              "text": "
+    ",
+              "type": "Text",
+            },
+            NestedNode {
+              "end": 133,
+              "loc": Object {
+                "end": Object {
+                  "column": 31,
+                  "line": 7,
+                },
+                "start": Object {
+                  "column": 5,
+                  "line": 7,
+                },
+              },
+              "params": Object {
+                "body": Array [
+                  Object {
+                    "name": "item",
+                    "type": "Identifier",
+                  },
+                  Object {
+                    "left": Object {
+                      "name": "item",
+                      "type": "Identifier",
+                    },
+                    "operator": "?",
+                    "right": Object {
+                      "name": "index",
+                      "type": "Identifier",
+                    },
+                    "type": "BuiltInExpression",
+                  },
+                ],
+                "type": "Compound",
+              },
+              "start": 107,
+              "type": "Nested",
+            },
+            TextNode {
+              "end": 136,
+              "loc": Object {
+                "end": Object {
+                  "column": 3,
+                  "line": 8,
+                },
+                "start": Object {
+                  "column": 31,
+                  "line": 7,
+                },
+              },
+              "start": 133,
+              "text": "
+  ",
+              "type": "Text",
+            },
+          ],
+          "end": 102,
+          "loc": Object {
+            "end": Object {
+              "column": 24,
+              "line": 6,
+            },
+            "start": Object {
+              "column": 3,
+              "line": 6,
+            },
+          },
+          "params": Object {
+            "body": Array [
+              Object {
+                "name": "items",
+                "type": "Identifier",
+              },
+              Object {
+                "name": "as",
+                "type": "Identifier",
+              },
+              Object {
+                "name": "item",
+                "type": "Identifier",
+              },
+            ],
+            "type": "Compound",
+          },
+          "start": 81,
+          "type": "List",
+        },
+        TextNode {
+          "end": 145,
+          "loc": Object {
+            "end": Object {
+              "column": 1,
+              "line": 9,
+            },
+            "start": Object {
+              "column": 11,
+              "line": 8,
+            },
+          },
+          "start": 144,
+          "text": "
+",
+          "type": "Text",
+        },
+      ],
+      "end": 78,
+      "loc": Object {
+        "end": Object {
+          "column": 20,
+          "line": 5,
+        },
+        "start": Object {
+          "column": 1,
+          "line": 5,
+        },
+      },
+      "params": Object {
+        "body": Array [
+          Object {
+            "name": "list",
+            "type": "Identifier",
+          },
+          Object {
+            "name": "items",
+            "type": "Identifier",
+          },
+        ],
+        "type": "Compound",
+      },
+      "start": 59,
+      "type": "Macro",
+    },
+    TextNode {
+      "end": 155,
+      "loc": Object {
+        "end": Object {
+          "column": 0,
+          "line": 0,
+        },
+        "start": Object {
+          "column": 10,
+          "line": 9,
+        },
+      },
+      "start": 154,
+      "text": "
+",
+      "type": "Text",
+    },
+  ],
+  "end": 154,
+  "loc": Object {
+    "end": Object {
+      "column": 10,
+      "line": 9,
+    },
+    "start": Object {
+      "column": 1,
+      "line": 1,
+    },
+  },
+  "start": 0,
+  "type": "Program",
+}
+`;
+
+exports[`nested.ftl should have correct tokens 1`] = `
+Array [
+  Object {
+    "end": 12,
+    "endTag": ">",
+    "params": "box",
+    "start": 0,
+    "startTag": "<#",
+    "text": "macro",
+    "type": "OpenDirective",
+  },
+  Object {
+    "end": 32,
+    "endTag": undefined,
+    "params": undefined,
+    "start": 12,
+    "startTag": undefined,
+    "text": "
+  <div class=\\"box\\">",
+    "type": "Text",
+  },
+  Object {
+    "end": 41,
+    "endTag": ">",
+    "params": undefined,
+    "start": 32,
+    "startTag": "<#",
+    "text": "nested",
+    "type": "OpenDirective",
+  },
+  Object {
+    "end": 48,
+    "endTag": undefined,
+    "params": undefined,
+    "start": 41,
+    "startTag": undefined,
+    "text": "</div>
+",
+    "type": "Text",
+  },
+  Object {
+    "end": 57,
+    "endTag": ">",
+    "params": undefined,
+    "start": 48,
+    "startTag": "</#",
+    "text": "macro",
+    "type": "CloseDirective",
+  },
+  Object {
+    "end": 59,
+    "endTag": undefined,
+    "params": undefined,
+    "start": 57,
+    "startTag": undefined,
+    "text": "
+
+",
+    "type": "Text",
+  },
+  Object {
+    "end": 78,
+    "endTag": ">",
+    "params": "list items",
+    "start": 59,
+    "startTag": "<#",
+    "text": "macro",
+    "type": "OpenDirective",
+  },
+  Object {
+    "end": 81,
+    "endTag": undefined,
+    "params": undefined,
+    "start": 78,
+    "startTag": undefined,
+    "text": "
+  ",
+    "type": "Text",
+  },
+  Object {
+    "end": 102,
+    "endTag": ">",
+    "params": "items as item",
+    "start": 81,
+    "startTag": "<#",
+    "text": "list",
+    "type": "OpenDirective",
+  },
+  Object {
+    "end": 107,
+    "endTag": undefined,
+    "params": undefined,
+    "start": 102,
+    "startTag": undefined,
+    "text": "
+    ",
+    "type": "Text",
+  },
+  Object {
+    "end": 133,
+    "endTag": ">",
+    "params": "item, item?index",
+    "start": 107,
+    "startTag": "<#",
+    "text": "nested",
+    "type": "OpenDirective",
+  },
+  Object {
+    "end": 136,
+    "endTag": undefined,
+    "params": undefined,
+    "start": 133,
+    "startTag": undefined,
+    "text": "
+  ",
+    "type": "Text",
+  },
+  Object {
+    "end": 144,
+    "endTag": ">",
+    "params": undefined,
+    "start": 136,
+    "startTag": "</#",
+    "text": "list",
+    "type": "CloseDirective",
+  },
+  Object {
+    "end": 145,
+    "endTag": undefined,
+    "params": undefined,
+    "start": 144,
+    "startTag": undefined,
+    "text": "
+",
+    "type": "Text",
+  },
+  Object {
+    "end": 154,
+    "endTag": ">",
+    "params": undefined,
+    "start": 145,
+    "startTag": "</#",
+    "text": "macro",
+    "type": "CloseDirective",
+  },
+  Object {
+    "end": 155,
+    "endTag": undefined,
+    "params": undefined,
+    "start": 154,
     "startTag": undefined,
     "text": "
 ",
