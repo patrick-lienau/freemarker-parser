@@ -121,6 +121,13 @@ export class Tokenizer extends AbstractTokenizer {
       ) {
         text += this.charAt(this.index);
         ch = this.charCodeAt(++this.index);
+      } else if (ch === ECharCodes.OpenBracket) {
+        // A bracketed lookup inside the name — `<@liferay_util["html-top"]>`,
+        // the standard way Liferay taglib macros are called. Consume the whole
+        // balanced group. In square-tag mode `]` is also the tag terminator, but
+        // the group is balanced from its own `[`, so its closer is unambiguous.
+        text += this.parseTagNameBrackets();
+        ch = this.charCodeAt(this.index);
       } else {
         throw new ParseError(`Invalid \`${this.charAt(this.index)}\``, {
           start: this.index,
@@ -129,6 +136,47 @@ export class Tokenizer extends AbstractTokenizer {
       }
     }
     return text;
+  }
+
+  /**
+   * Consume a balanced `[...]` group beginning at the current index, quotes
+   * respected, and return it verbatim. Used only by `parseTagName`, for macro
+   * names that carry a bracketed lookup.
+   */
+  protected parseTagNameBrackets(): string {
+    const start = this.index;
+    let depth = 0;
+    let quote: number | undefined;
+
+    while (this.index < this.template.length) {
+      const ch = this.charCodeAt(this.index);
+
+      if (quote !== undefined) {
+        if (ch === quote) {
+          quote = undefined;
+        }
+      } else if (
+        ch === ECharCodes.SingleQuote ||
+        ch === ECharCodes.DoubleQuote
+      ) {
+        quote = ch;
+      } else if (ch === ECharCodes.OpenBracket) {
+        depth++;
+      } else if (ch === ECharCodes.CloseBracket) {
+        depth--;
+        if (depth === 0) {
+          ++this.index;
+          return this.template.substring(start, this.index);
+        }
+      }
+
+      ++this.index;
+    }
+
+    throw new ParseError('Unclosed [ in tag name', {
+      start,
+      end: this.index,
+    });
   }
 
   protected getToken(): ParseSymbol | null {
@@ -262,7 +310,10 @@ export class Tokenizer extends AbstractTokenizer {
     start: number,
   ): void {
     const typeString = this.parseTagName();
-    if (typeString.length === 0) {
+    // `</@>` / `[/@]` is FreeMarker's legal shorthand close for a macro call —
+    // the name is optional and the parser matches on node type, not on it. A
+    // close DIRECTIVE (`</#>`) has no such shorthand, so it still requires one.
+    if (typeString.length === 0 && symbol.type !== NodeType.CloseMacro) {
       throw new ParseError(`${symbol.type} name cannot be empty`, {
         start: this.index,
         end: this.index,
