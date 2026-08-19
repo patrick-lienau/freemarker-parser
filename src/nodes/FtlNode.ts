@@ -8,6 +8,10 @@ export default class FtlNode extends AbstractAssign {
 
   constructor(token: Token) {
     super(NodeTypes.Assign, token);
-    this.params = this.checkParams(token);
+    // Every `#ftl` attribute (encoding, output_format, strip_whitespace, …) is
+    // optional, so a bare `<#ftl>` is valid and carries no params. Inherited
+    // checkParams() treats absent params as an error, which is right for
+    // `#assign`/`#local`/`#global` but not here.
+    this.params = token.params ? this.checkParams(token) : [];
   }
 }
