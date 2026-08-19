@@ -80,4 +80,44 @@ describe('bracketed macro names', () => {
       'CloseDirective name cannot be empty',
     ]);
   });
+
+  // The regression that made these worth fixing: a tokenizer throw leaves NO
+  // tokens, so the file yields zero nodes and every AST rule treats it as empty
+  // rather than as broken. These assert the structure actually survives, not
+  // merely that no error is reported.
+  it('keeps surrounding structure intact around a taglib call', () => {
+    const ast = parse(
+      '[#if a]\n[@liferay_util["html-top"]]<link/>[/@]\n[/#if]',
+    );
+    expect(messages(ast)).toEqual([]);
+    expect(ast.body).toHaveLength(1);
+    expect(ast.body[0].type).toBe(NodeTypes.Condition);
+    const consequent = (ast.body[0] as unknown as { consequent: Array<{ type: string }> })
+      .consequent;
+    expect(consequent.map((n) => n.type)).toContain(NodeTypes.MacroCall);
+  });
+
+  it('parses a taglib call spanning several lines', () => {
+    const ast = parse('[@liferay_ui["message"]\n  key="x"\n/]');
+    expect(messages(ast)).toEqual([]);
+    expect(firstMacroName(ast)).toBe('liferay_ui["message"]');
+  });
+
+  it('handles a bracketed name and a shorthand close in the same document', () => {
+    const ast = parse(
+      '[@liferay_util["html-top"]]a[/@][@isaButton]b[/@]',
+    );
+    expect(messages(ast)).toEqual([]);
+    expect(ast.body.map((n) => n.type)).toEqual([
+      NodeTypes.MacroCall,
+      NodeTypes.MacroCall,
+    ]);
+  });
+
+  it('produces a non-empty tree where 1.4.0 produced none', () => {
+    // Both constructs at once — the exact shape that used to yield zero nodes.
+    const ast = parse('<@liferay_util["html-top"]><link/></@>');
+    expect(messages(ast)).toEqual([]);
+    expect(ast.body.length).toBeGreaterThan(0);
+  });
 });

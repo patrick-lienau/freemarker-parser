@@ -69,6 +69,17 @@ export class Parser extends ParserLocation {
             );
             continue;
           }
+          // `<#sep>` may be written without a close tag, in which case it runs
+          // to the end of its enclosing list. Close any such implicitly-closable
+          // node before judging whether this close tag matches.
+          while (
+            parent.type !== tokenType &&
+            this.isImplicitlyClosable(parent.type) &&
+            stack.length > 0
+          ) {
+            parent = stack.pop() as AbstractNode;
+          }
+
           if (parent.type !== tokenType) {
             ast.addError(
               new ParseError(`Unexpected close tag '${tokenType}'`, token),
@@ -119,6 +130,15 @@ export class Parser extends ParserLocation {
       parent.addToNode(node);
     }
     return node;
+  }
+
+  /**
+   * Nodes whose close tag is optional, so the end of an enclosing block closes
+   * them. Only `#sep` qualifies: `<#list xs as x>${x}<#sep>, </#list>` is legal
+   * FreeMarker, with the separator running to the end of the list body.
+   */
+  protected isImplicitlyClosable(type: NodeTypes): boolean {
+    return type === NodeTypes.Sep;
   }
 
   protected isPartial(type: NodeTypes, parentType: NodeTypes): boolean {

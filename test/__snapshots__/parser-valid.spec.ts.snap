@@ -7244,6 +7244,712 @@ Array [
 ]
 `;
 
+exports[`continue-sep-macros.ftl should have correct ast 1`] = `
+ProgramNode {
+  "body": Array [
+    ListNode {
+      "body": Array [
+        TextNode {
+          "end": 24,
+          "loc": Object {
+            "end": Object {
+              "column": 3,
+              "line": 2,
+            },
+            "start": Object {
+              "column": 22,
+              "line": 1,
+            },
+          },
+          "start": 21,
+          "text": "
+  ",
+          "type": "Text",
+        },
+        ConditionNode {
+          "consequent": Array [
+            ContinueNode {
+              "end": 54,
+              "loc": Object {
+                "end": Object {
+                  "column": 33,
+                  "line": 2,
+                },
+                "start": Object {
+                  "column": 22,
+                  "line": 2,
+                },
+              },
+              "start": 43,
+              "type": "Continue",
+            },
+          ],
+          "end": 43,
+          "loc": Object {
+            "end": Object {
+              "column": 22,
+              "line": 2,
+            },
+            "start": Object {
+              "column": 3,
+              "line": 2,
+            },
+          },
+          "params": Object {
+            "argument": Object {
+              "computed": false,
+              "object": Object {
+                "name": "item",
+                "type": "Identifier",
+              },
+              "property": Object {
+                "name": "visible",
+                "type": "Identifier",
+              },
+              "type": "MemberExpression",
+            },
+            "operator": "!",
+            "prefix": true,
+            "type": "UnaryExpression",
+          },
+          "start": 24,
+          "type": "Condition",
+        },
+        TextNode {
+          "end": 63,
+          "loc": Object {
+            "end": Object {
+              "column": 3,
+              "line": 3,
+            },
+            "start": Object {
+              "column": 39,
+              "line": 2,
+            },
+          },
+          "start": 60,
+          "text": "
+  ",
+          "type": "Text",
+        },
+        InterpolationNode {
+          "end": 75,
+          "loc": Object {
+            "end": Object {
+              "column": 15,
+              "line": 3,
+            },
+            "start": Object {
+              "column": 3,
+              "line": 3,
+            },
+          },
+          "params": Object {
+            "computed": false,
+            "object": Object {
+              "name": "item",
+              "type": "Identifier",
+            },
+            "property": Object {
+              "name": "name",
+              "type": "Identifier",
+            },
+            "type": "MemberExpression",
+          },
+          "start": 63,
+          "type": "Interpolation",
+        },
+        TextNode {
+          "end": 76,
+          "loc": Object {
+            "end": Object {
+              "column": 1,
+              "line": 4,
+            },
+            "start": Object {
+              "column": 15,
+              "line": 3,
+            },
+          },
+          "start": 75,
+          "text": "
+",
+          "type": "Text",
+        },
+        SepNode {
+          "body": Array [
+            TextNode {
+              "end": 84,
+              "loc": Object {
+                "end": Object {
+                  "column": 9,
+                  "line": 4,
+                },
+                "start": Object {
+                  "column": 7,
+                  "line": 4,
+                },
+              },
+              "start": 82,
+              "text": ", ",
+              "type": "Text",
+            },
+          ],
+          "end": 82,
+          "loc": Object {
+            "end": Object {
+              "column": 7,
+              "line": 4,
+            },
+            "start": Object {
+              "column": 1,
+              "line": 4,
+            },
+          },
+          "start": 76,
+          "type": "Sep",
+        },
+        TextNode {
+          "end": 92,
+          "loc": Object {
+            "end": Object {
+              "column": 1,
+              "line": 5,
+            },
+            "start": Object {
+              "column": 16,
+              "line": 4,
+            },
+          },
+          "start": 91,
+          "text": "
+",
+          "type": "Text",
+        },
+      ],
+      "end": 21,
+      "loc": Object {
+        "end": Object {
+          "column": 22,
+          "line": 1,
+        },
+        "start": Object {
+          "column": 1,
+          "line": 1,
+        },
+      },
+      "params": Object {
+        "body": Array [
+          Object {
+            "name": "items",
+            "type": "Identifier",
+          },
+          Object {
+            "name": "as",
+            "type": "Identifier",
+          },
+          Object {
+            "name": "item",
+            "type": "Identifier",
+          },
+        ],
+        "type": "Compound",
+      },
+      "start": 0,
+      "type": "List",
+    },
+    TextNode {
+      "end": 102,
+      "loc": Object {
+        "end": Object {
+          "column": 1,
+          "line": 7,
+        },
+        "start": Object {
+          "column": 9,
+          "line": 5,
+        },
+      },
+      "start": 100,
+      "text": "
+
+",
+      "type": "Text",
+    },
+    ListNode {
+      "body": Array [
+        InterpolationNode {
+          "end": 130,
+          "loc": Object {
+            "end": Object {
+              "column": 29,
+              "line": 7,
+            },
+            "start": Object {
+              "column": 22,
+              "line": 7,
+            },
+          },
+          "params": Object {
+            "name": "item",
+            "type": "Identifier",
+          },
+          "start": 123,
+          "type": "Interpolation",
+        },
+        SepNode {
+          "body": Array [
+            TextNode {
+              "end": 138,
+              "loc": Object {
+                "end": Object {
+                  "column": 37,
+                  "line": 7,
+                },
+                "start": Object {
+                  "column": 35,
+                  "line": 7,
+                },
+              },
+              "start": 136,
+              "text": ", ",
+              "type": "Text",
+            },
+          ],
+          "end": 136,
+          "loc": Object {
+            "end": Object {
+              "column": 35,
+              "line": 7,
+            },
+            "start": Object {
+              "column": 29,
+              "line": 7,
+            },
+          },
+          "start": 130,
+          "type": "Sep",
+        },
+      ],
+      "end": 123,
+      "loc": Object {
+        "end": Object {
+          "column": 22,
+          "line": 7,
+        },
+        "start": Object {
+          "column": 1,
+          "line": 7,
+        },
+      },
+      "params": Object {
+        "body": Array [
+          Object {
+            "name": "items",
+            "type": "Identifier",
+          },
+          Object {
+            "name": "as",
+            "type": "Identifier",
+          },
+          Object {
+            "name": "item",
+            "type": "Identifier",
+          },
+        ],
+        "type": "Compound",
+      },
+      "start": 102,
+      "type": "List",
+    },
+    TextNode {
+      "end": 148,
+      "loc": Object {
+        "end": Object {
+          "column": 1,
+          "line": 9,
+        },
+        "start": Object {
+          "column": 45,
+          "line": 7,
+        },
+      },
+      "start": 146,
+      "text": "
+
+",
+      "type": "Text",
+    },
+    MacroCallNode {
+      "body": Array [
+        TextNode {
+          "end": 216,
+          "loc": Object {
+            "end": Object {
+              "column": 1,
+              "line": 11,
+            },
+            "start": Object {
+              "column": 28,
+              "line": 9,
+            },
+          },
+          "start": 175,
+          "text": "
+  <link rel=\\"stylesheet\\" href=\\"x.css\\"/>
+",
+          "type": "Text",
+        },
+      ],
+      "end": 175,
+      "loc": Object {
+        "end": Object {
+          "column": 28,
+          "line": 9,
+        },
+        "start": Object {
+          "column": 1,
+          "line": 9,
+        },
+      },
+      "name": "liferay_util[\\"html-top\\"]",
+      "params": undefined,
+      "start": 148,
+      "type": "MacroCall",
+    },
+    TextNode {
+      "end": 222,
+      "loc": Object {
+        "end": Object {
+          "column": 1,
+          "line": 13,
+        },
+        "start": Object {
+          "column": 5,
+          "line": 11,
+        },
+      },
+      "start": 220,
+      "text": "
+
+",
+      "type": "Text",
+    },
+    MacroCallNode {
+      "end": 262,
+      "loc": Object {
+        "end": Object {
+          "column": 41,
+          "line": 13,
+        },
+        "start": Object {
+          "column": 1,
+          "line": 13,
+        },
+      },
+      "name": "liferay_ui[\\"message\\"]",
+      "params": Object {
+        "left": Object {
+          "name": "key",
+          "type": "Identifier",
+        },
+        "operator": "=",
+        "right": Object {
+          "raw": "\\"welcome\\"",
+          "type": "Literal",
+          "value": "welcome",
+        },
+        "type": "AssignmentExpression",
+      },
+      "start": 222,
+      "type": "MacroCall",
+    },
+    TextNode {
+      "end": 263,
+      "loc": Object {
+        "end": Object {
+          "column": 0,
+          "line": 0,
+        },
+        "start": Object {
+          "column": 41,
+          "line": 13,
+        },
+      },
+      "start": 262,
+      "text": "
+",
+      "type": "Text",
+    },
+  ],
+  "end": 262,
+  "loc": Object {
+    "end": Object {
+      "column": 41,
+      "line": 13,
+    },
+    "start": Object {
+      "column": 1,
+      "line": 1,
+    },
+  },
+  "start": 0,
+  "type": "Program",
+}
+`;
+
+exports[`continue-sep-macros.ftl should have correct tokens 1`] = `
+Array [
+  Object {
+    "end": 21,
+    "endTag": ">",
+    "params": "items as item",
+    "start": 0,
+    "startTag": "<#",
+    "text": "list",
+    "type": "OpenDirective",
+  },
+  Object {
+    "end": 24,
+    "endTag": undefined,
+    "params": undefined,
+    "start": 21,
+    "startTag": undefined,
+    "text": "
+  ",
+    "type": "Text",
+  },
+  Object {
+    "end": 43,
+    "endTag": ">",
+    "params": "!item.visible",
+    "start": 24,
+    "startTag": "<#",
+    "text": "if",
+    "type": "OpenDirective",
+  },
+  Object {
+    "end": 54,
+    "endTag": ">",
+    "params": undefined,
+    "start": 43,
+    "startTag": "<#",
+    "text": "continue",
+    "type": "OpenDirective",
+  },
+  Object {
+    "end": 60,
+    "endTag": ">",
+    "params": undefined,
+    "start": 54,
+    "startTag": "</#",
+    "text": "if",
+    "type": "CloseDirective",
+  },
+  Object {
+    "end": 63,
+    "endTag": undefined,
+    "params": undefined,
+    "start": 60,
+    "startTag": undefined,
+    "text": "
+  ",
+    "type": "Text",
+  },
+  Object {
+    "end": 75,
+    "endTag": "}",
+    "params": "item.name",
+    "start": 63,
+    "startTag": "\${",
+    "text": "",
+    "type": "Interpolation",
+  },
+  Object {
+    "end": 76,
+    "endTag": undefined,
+    "params": undefined,
+    "start": 75,
+    "startTag": undefined,
+    "text": "
+",
+    "type": "Text",
+  },
+  Object {
+    "end": 82,
+    "endTag": ">",
+    "params": undefined,
+    "start": 76,
+    "startTag": "<#",
+    "text": "sep",
+    "type": "OpenDirective",
+  },
+  Object {
+    "end": 84,
+    "endTag": undefined,
+    "params": undefined,
+    "start": 82,
+    "startTag": undefined,
+    "text": ", ",
+    "type": "Text",
+  },
+  Object {
+    "end": 91,
+    "endTag": ">",
+    "params": undefined,
+    "start": 84,
+    "startTag": "</#",
+    "text": "sep",
+    "type": "CloseDirective",
+  },
+  Object {
+    "end": 92,
+    "endTag": undefined,
+    "params": undefined,
+    "start": 91,
+    "startTag": undefined,
+    "text": "
+",
+    "type": "Text",
+  },
+  Object {
+    "end": 100,
+    "endTag": ">",
+    "params": undefined,
+    "start": 92,
+    "startTag": "</#",
+    "text": "list",
+    "type": "CloseDirective",
+  },
+  Object {
+    "end": 102,
+    "endTag": undefined,
+    "params": undefined,
+    "start": 100,
+    "startTag": undefined,
+    "text": "
+
+",
+    "type": "Text",
+  },
+  Object {
+    "end": 123,
+    "endTag": ">",
+    "params": "items as item",
+    "start": 102,
+    "startTag": "<#",
+    "text": "list",
+    "type": "OpenDirective",
+  },
+  Object {
+    "end": 130,
+    "endTag": "}",
+    "params": "item",
+    "start": 123,
+    "startTag": "\${",
+    "text": "",
+    "type": "Interpolation",
+  },
+  Object {
+    "end": 136,
+    "endTag": ">",
+    "params": undefined,
+    "start": 130,
+    "startTag": "<#",
+    "text": "sep",
+    "type": "OpenDirective",
+  },
+  Object {
+    "end": 138,
+    "endTag": undefined,
+    "params": undefined,
+    "start": 136,
+    "startTag": undefined,
+    "text": ", ",
+    "type": "Text",
+  },
+  Object {
+    "end": 146,
+    "endTag": ">",
+    "params": undefined,
+    "start": 138,
+    "startTag": "</#",
+    "text": "list",
+    "type": "CloseDirective",
+  },
+  Object {
+    "end": 148,
+    "endTag": undefined,
+    "params": undefined,
+    "start": 146,
+    "startTag": undefined,
+    "text": "
+
+",
+    "type": "Text",
+  },
+  Object {
+    "end": 175,
+    "endTag": ">",
+    "params": undefined,
+    "start": 148,
+    "startTag": "<@",
+    "text": "liferay_util[\\"html-top\\"]",
+    "type": "OpenMacro",
+  },
+  Object {
+    "end": 216,
+    "endTag": undefined,
+    "params": undefined,
+    "start": 175,
+    "startTag": undefined,
+    "text": "
+  <link rel=\\"stylesheet\\" href=\\"x.css\\"/>
+",
+    "type": "Text",
+  },
+  Object {
+    "end": 220,
+    "endTag": ">",
+    "params": undefined,
+    "start": 216,
+    "startTag": "</@",
+    "text": "",
+    "type": "CloseMacro",
+  },
+  Object {
+    "end": 222,
+    "endTag": undefined,
+    "params": undefined,
+    "start": 220,
+    "startTag": undefined,
+    "text": "
+
+",
+    "type": "Text",
+  },
+  Object {
+    "end": 262,
+    "endTag": "/>",
+    "params": "key=\\"welcome\\" ",
+    "start": 222,
+    "startTag": "<@",
+    "text": "liferay_ui[\\"message\\"]",
+    "type": "OpenMacro",
+  },
+  Object {
+    "end": 263,
+    "endTag": undefined,
+    "params": undefined,
+    "start": 262,
+    "startTag": undefined,
+    "text": "
+",
+    "type": "Text",
+  },
+]
+`;
+
 exports[`empty.ftl should have correct ast 1`] = `
 ProgramNode {
   "body": Array [],

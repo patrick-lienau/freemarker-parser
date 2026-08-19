@@ -20,6 +20,8 @@ export enum NodeTypes {
   SwitchCase = 'SwitchCase',
   SwitchDefault = 'SwitchDefault',
   Break = 'Break',
+  Continue = 'Continue',
+  Sep = 'Sep',
   Function = 'Function',
   Return = 'Return',
   Compress = 'Compress',

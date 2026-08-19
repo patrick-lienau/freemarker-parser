@@ -40,6 +40,8 @@ export enum Directives {
   case = NodeTypes.SwitchCase,
   default = NodeTypes.SwitchDefault,
   break = NodeTypes.Break,
+  continue = NodeTypes.Continue,
+  sep = NodeTypes.Sep,
   t = NodeTypes.T,
   // visit = NodeTypes.Visit, // TODO: unsupported
   noparse = NodeTypes.Text,
