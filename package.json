@@ -1,6 +1,6 @@
 {
   "name": "@neptune/freemarker-parser",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "publishConfig": {
     "registry": "https://npm.thirdwavellc.com/repository/thirdwave-npm/"
   },
