@@ -23056,6 +23056,540 @@ Array [
 ]
 `;
 
+exports[`range.ftl should have correct ast 1`] = `
+ProgramNode {
+  "body": Array [
+    ListNode {
+      "body": Array [
+        InterpolationNode {
+          "end": 21,
+          "loc": Object {
+            "end": Object {
+              "column": 22,
+              "line": 1,
+            },
+            "start": Object {
+              "column": 18,
+              "line": 1,
+            },
+          },
+          "params": Object {
+            "name": "i",
+            "type": "Identifier",
+          },
+          "start": 17,
+          "type": "Interpolation",
+        },
+      ],
+      "end": 17,
+      "loc": Object {
+        "end": Object {
+          "column": 18,
+          "line": 1,
+        },
+        "start": Object {
+          "column": 1,
+          "line": 1,
+        },
+      },
+      "params": Object {
+        "body": Array [
+          Object {
+            "left": Object {
+              "raw": "1",
+              "type": "Literal",
+              "value": 1,
+            },
+            "operator": "..",
+            "right": Object {
+              "raw": "3",
+              "type": "Literal",
+              "value": 3,
+            },
+            "type": "BinaryExpression",
+          },
+          Object {
+            "name": "as",
+            "type": "Identifier",
+          },
+          Object {
+            "name": "i",
+            "type": "Identifier",
+          },
+        ],
+        "type": "Compound",
+      },
+      "start": 0,
+      "type": "List",
+    },
+    TextNode {
+      "end": 30,
+      "loc": Object {
+        "end": Object {
+          "column": 1,
+          "line": 2,
+        },
+        "start": Object {
+          "column": 30,
+          "line": 1,
+        },
+      },
+      "start": 29,
+      "text": "
+",
+      "type": "Text",
+    },
+    ListNode {
+      "body": Array [
+        InterpolationNode {
+          "end": 83,
+          "loc": Object {
+            "end": Object {
+              "column": 54,
+              "line": 2,
+            },
+            "start": Object {
+              "column": 50,
+              "line": 2,
+            },
+          },
+          "params": Object {
+            "name": "i",
+            "type": "Identifier",
+          },
+          "start": 79,
+          "type": "Interpolation",
+        },
+      ],
+      "end": 79,
+      "loc": Object {
+        "end": Object {
+          "column": 50,
+          "line": 2,
+        },
+        "start": Object {
+          "column": 1,
+          "line": 2,
+        },
+      },
+      "params": Object {
+        "body": Array [
+          Object {
+            "left": Object {
+              "raw": "0",
+              "type": "Literal",
+              "value": 0,
+            },
+            "operator": "..",
+            "right": Object {
+              "left": Object {
+                "computed": false,
+                "object": Object {
+                  "name": "configuration",
+                  "type": "Identifier",
+                },
+                "property": Object {
+                  "name": "numberOfMenuItems",
+                  "type": "Identifier",
+                },
+                "type": "MemberExpression",
+              },
+              "operator": "-",
+              "right": Object {
+                "raw": "1",
+                "type": "Literal",
+                "value": 1,
+              },
+              "type": "BinaryExpression",
+            },
+            "type": "BinaryExpression",
+          },
+          Object {
+            "name": "as",
+            "type": "Identifier",
+          },
+          Object {
+            "name": "i",
+            "type": "Identifier",
+          },
+        ],
+        "type": "Compound",
+      },
+      "start": 30,
+      "type": "List",
+    },
+    TextNode {
+      "end": 92,
+      "loc": Object {
+        "end": Object {
+          "column": 1,
+          "line": 3,
+        },
+        "start": Object {
+          "column": 62,
+          "line": 2,
+        },
+      },
+      "start": 91,
+      "text": "
+",
+      "type": "Text",
+    },
+    ListNode {
+      "body": Array [
+        InterpolationNode {
+          "end": 115,
+          "loc": Object {
+            "end": Object {
+              "column": 24,
+              "line": 3,
+            },
+            "start": Object {
+              "column": 20,
+              "line": 3,
+            },
+          },
+          "params": Object {
+            "name": "i",
+            "type": "Identifier",
+          },
+          "start": 111,
+          "type": "Interpolation",
+        },
+      ],
+      "end": 111,
+      "loc": Object {
+        "end": Object {
+          "column": 20,
+          "line": 3,
+        },
+        "start": Object {
+          "column": 1,
+          "line": 3,
+        },
+      },
+      "params": Object {
+        "body": Array [
+          Object {
+            "left": Object {
+              "raw": "0",
+              "type": "Literal",
+              "value": 0,
+            },
+            "operator": "..<",
+            "right": Object {
+              "raw": "10",
+              "type": "Literal",
+              "value": 10,
+            },
+            "type": "BinaryExpression",
+          },
+          Object {
+            "name": "as",
+            "type": "Identifier",
+          },
+          Object {
+            "name": "i",
+            "type": "Identifier",
+          },
+        ],
+        "type": "Compound",
+      },
+      "start": 92,
+      "type": "List",
+    },
+    TextNode {
+      "end": 124,
+      "loc": Object {
+        "end": Object {
+          "column": 1,
+          "line": 4,
+        },
+        "start": Object {
+          "column": 32,
+          "line": 3,
+        },
+      },
+      "start": 123,
+      "text": "
+",
+      "type": "Text",
+    },
+    InterpolationNode {
+      "end": 138,
+      "loc": Object {
+        "end": Object {
+          "column": 15,
+          "line": 4,
+        },
+        "start": Object {
+          "column": 1,
+          "line": 4,
+        },
+      },
+      "params": Object {
+        "computed": true,
+        "object": Object {
+          "name": "items",
+          "type": "Identifier",
+        },
+        "property": Object {
+          "left": Object {
+            "raw": "0",
+            "type": "Literal",
+            "value": 0,
+          },
+          "operator": "..",
+          "right": Object {
+            "raw": "2",
+            "type": "Literal",
+            "value": 2,
+          },
+          "type": "BinaryExpression",
+        },
+        "type": "MemberExpression",
+      },
+      "start": 124,
+      "type": "Interpolation",
+    },
+    TextNode {
+      "end": 139,
+      "loc": Object {
+        "end": Object {
+          "column": 1,
+          "line": 5,
+        },
+        "start": Object {
+          "column": 15,
+          "line": 4,
+        },
+      },
+      "start": 138,
+      "text": "
+",
+      "type": "Text",
+    },
+    InterpolationNode {
+      "end": 150,
+      "loc": Object {
+        "end": Object {
+          "column": 12,
+          "line": 5,
+        },
+        "start": Object {
+          "column": 1,
+          "line": 5,
+        },
+      },
+      "params": Object {
+        "computed": true,
+        "object": Object {
+          "name": "seq",
+          "type": "Identifier",
+        },
+        "property": Object {
+          "argument": Object {
+            "raw": "5",
+            "type": "Literal",
+            "value": 5,
+          },
+          "operator": "..",
+          "prefix": false,
+          "type": "UnaryExpression",
+        },
+        "type": "MemberExpression",
+      },
+      "start": 139,
+      "type": "Interpolation",
+    },
+    TextNode {
+      "end": 151,
+      "loc": Object {
+        "end": Object {
+          "column": 0,
+          "line": 0,
+        },
+        "start": Object {
+          "column": 12,
+          "line": 5,
+        },
+      },
+      "start": 150,
+      "text": "
+",
+      "type": "Text",
+    },
+  ],
+  "end": 150,
+  "loc": Object {
+    "end": Object {
+      "column": 12,
+      "line": 5,
+    },
+    "start": Object {
+      "column": 1,
+      "line": 1,
+    },
+  },
+  "start": 0,
+  "type": "Program",
+}
+`;
+
+exports[`range.ftl should have correct tokens 1`] = `
+Array [
+  Object {
+    "end": 17,
+    "endTag": ">",
+    "params": "1..3 as i",
+    "start": 0,
+    "startTag": "<#",
+    "text": "list",
+    "type": "OpenDirective",
+  },
+  Object {
+    "end": 21,
+    "endTag": "}",
+    "params": "i",
+    "start": 17,
+    "startTag": "\${",
+    "text": "",
+    "type": "Interpolation",
+  },
+  Object {
+    "end": 29,
+    "endTag": ">",
+    "params": undefined,
+    "start": 21,
+    "startTag": "</#",
+    "text": "list",
+    "type": "CloseDirective",
+  },
+  Object {
+    "end": 30,
+    "endTag": undefined,
+    "params": undefined,
+    "start": 29,
+    "startTag": undefined,
+    "text": "
+",
+    "type": "Text",
+  },
+  Object {
+    "end": 79,
+    "endTag": ">",
+    "params": "0..configuration.numberOfMenuItems-1 as i",
+    "start": 30,
+    "startTag": "<#",
+    "text": "list",
+    "type": "OpenDirective",
+  },
+  Object {
+    "end": 83,
+    "endTag": "}",
+    "params": "i",
+    "start": 79,
+    "startTag": "\${",
+    "text": "",
+    "type": "Interpolation",
+  },
+  Object {
+    "end": 91,
+    "endTag": ">",
+    "params": undefined,
+    "start": 83,
+    "startTag": "</#",
+    "text": "list",
+    "type": "CloseDirective",
+  },
+  Object {
+    "end": 92,
+    "endTag": undefined,
+    "params": undefined,
+    "start": 91,
+    "startTag": undefined,
+    "text": "
+",
+    "type": "Text",
+  },
+  Object {
+    "end": 111,
+    "endTag": ">",
+    "params": "0..<10 as i",
+    "start": 92,
+    "startTag": "<#",
+    "text": "list",
+    "type": "OpenDirective",
+  },
+  Object {
+    "end": 115,
+    "endTag": "}",
+    "params": "i",
+    "start": 111,
+    "startTag": "\${",
+    "text": "",
+    "type": "Interpolation",
+  },
+  Object {
+    "end": 123,
+    "endTag": ">",
+    "params": undefined,
+    "start": 115,
+    "startTag": "</#",
+    "text": "list",
+    "type": "CloseDirective",
+  },
+  Object {
+    "end": 124,
+    "endTag": undefined,
+    "params": undefined,
+    "start": 123,
+    "startTag": undefined,
+    "text": "
+",
+    "type": "Text",
+  },
+  Object {
+    "end": 138,
+    "endTag": "}",
+    "params": "items[0..2]",
+    "start": 124,
+    "startTag": "\${",
+    "text": "",
+    "type": "Interpolation",
+  },
+  Object {
+    "end": 139,
+    "endTag": undefined,
+    "params": undefined,
+    "start": 138,
+    "startTag": undefined,
+    "text": "
+",
+    "type": "Text",
+  },
+  Object {
+    "end": 150,
+    "endTag": "}",
+    "params": "seq[5..]",
+    "start": 139,
+    "startTag": "\${",
+    "text": "",
+    "type": "Interpolation",
+  },
+  Object {
+    "end": 151,
+    "endTag": undefined,
+    "params": undefined,
+    "start": 150,
+    "startTag": undefined,
+    "text": "
+",
+    "type": "Text",
+  },
+]
+`;
+
 exports[`setting.ftl should have correct ast 1`] = `
 ProgramNode {
   "body": Array [

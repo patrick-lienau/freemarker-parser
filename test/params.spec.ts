@@ -332,6 +332,144 @@ describe('params parser', () => {
     });
   });
 
+  // ---------------------------------------------------------------------------
+  // Range operators — `0..9`, `0..<10`, `0..!10`, `0..*10`, and the open-ended
+  // `5..`. See BinaryOps in enum/Operators.ts for the precedence choice.
+  // ---------------------------------------------------------------------------
+
+  const lit = (value: number, raw: string): AllParamTypes =>
+    ({ type: ParamNames.Literal, value, raw } as AllParamTypes);
+  const ident = (name: string): AllParamTypes =>
+    ({ type: ParamNames.Identifier, name } as AllParamTypes);
+
+  it('numeric range', () => {
+    expect(parse('1..3')).toStrictEqual({
+      type: ParamNames.BinaryExpression,
+      operator: Operators.DOT_DOT,
+      left: lit(1, '1'),
+      right: lit(3, '3'),
+    });
+  });
+
+  it('identifier range', () => {
+    expect(parse('start..end')).toStrictEqual({
+      type: ParamNames.BinaryExpression,
+      operator: Operators.DOT_DOT,
+      left: ident('start'),
+      right: ident('end'),
+    });
+  });
+
+  it.each([
+    [Operators.DOT_DOT_LESS, '0..<10'],
+    [Operators.DOT_DOT_NOT, '0..!10'],
+    [Operators.DOT_DOT_ASTERISK, '0..*10'],
+  ])('range variant %s', (operator, source) => {
+    expect(parse(source)).toStrictEqual({
+      type: ParamNames.BinaryExpression,
+      operator,
+      left: lit(0, '0'),
+      right: lit(10, '10'),
+    });
+  });
+
+  it('binds looser than arithmetic (`0..n-1` is `0..(n-1)`)', () => {
+    expect(parse('0..n-1')).toStrictEqual({
+      type: ParamNames.BinaryExpression,
+      operator: Operators.DOT_DOT,
+      left: lit(0, '0'),
+      right: {
+        type: ParamNames.BinaryExpression,
+        operator: Operators.MINUS,
+        left: ident('n'),
+        right: lit(1, '1'),
+      },
+    });
+  });
+
+  it('binds tighter than comparison (`x..y > z` is `(x..y) > z`)', () => {
+    expect(parse('x..y > z')).toStrictEqual({
+      type: ParamNames.BinaryExpression,
+      operator: Operators.NATURAL_GT,
+      left: {
+        type: ParamNames.BinaryExpression,
+        operator: Operators.DOT_DOT,
+        left: ident('x'),
+        right: ident('y'),
+      },
+      right: ident('z'),
+    });
+  });
+
+  it('range over a member expression', () => {
+    expect(parse('0..configuration.count-1')).toStrictEqual({
+      type: ParamNames.BinaryExpression,
+      operator: Operators.DOT_DOT,
+      left: lit(0, '0'),
+      right: {
+        type: ParamNames.BinaryExpression,
+        operator: Operators.MINUS,
+        left: {
+          type: ParamNames.MemberExpression,
+          computed: false,
+          object: ident('configuration'),
+          property: ident('count'),
+        },
+        right: lit(1, '1'),
+      },
+    });
+  });
+
+  it('range as a sequence slice', () => {
+    expect(parse('items[0..2]')).toStrictEqual({
+      type: ParamNames.MemberExpression,
+      computed: true,
+      object: ident('items'),
+      property: {
+        type: ParamNames.BinaryExpression,
+        operator: Operators.DOT_DOT,
+        left: lit(0, '0'),
+        right: lit(2, '2'),
+      },
+    });
+  });
+
+  it('open-ended range is a postfix unary', () => {
+    expect(parse('seq[5..]')).toStrictEqual({
+      type: ParamNames.MemberExpression,
+      computed: true,
+      object: ident('seq'),
+      property: {
+        type: ParamNames.UnaryExpression,
+        operator: Operators.DOT_DOT,
+        argument: lit(5, '5'),
+        prefix: false,
+      },
+    });
+  });
+
+  it('decimal literals still parse next to a range', () => {
+    expect(parse('1.5..2.5')).toStrictEqual({
+      type: ParamNames.BinaryExpression,
+      operator: Operators.DOT_DOT,
+      left: lit(1.5, '1.5'),
+      right: lit(2.5, '2.5'),
+    });
+  });
+
+  it('a second decimal marker is still an error', () => {
+    expect(() => parse('1.2.3')).toThrow('Unexpected period');
+  });
+
+  it('member access is unaffected by the range fix', () => {
+    expect(parse('a.b')).toStrictEqual({
+      type: ParamNames.MemberExpression,
+      computed: false,
+      object: ident('a'),
+      property: ident('b'),
+    });
+  });
+
   it('to string', () => {
     const result = parse('foo?string("yes")');
     const expected = {

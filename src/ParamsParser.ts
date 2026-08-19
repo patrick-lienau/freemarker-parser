@@ -5,6 +5,7 @@ import {
   Literals,
   Operators,
   UnaryOps,
+  isRangeOp,
   maxBinaryOps,
   maxUnaryOps,
 } from './enum/Operators';
@@ -284,6 +285,38 @@ export class ParamsParser extends AbstractTokenizer {
   }
 
   /**
+   * An open-ended range (`seq[5..]`, `text[3..]`) — the range operators are the
+   * only binary operators FreeMarker lets you write with no right operand, so
+   * the precedence stack cannot represent them. Attach one to its left operand
+   * as a postfix unary instead.
+   *
+   * Call with `this.index` just past the operator. Returns the postfix node when
+   * nothing follows the operator, or `null` with the index restored when
+   * something does — leaving the caller to treat it as an ordinary binary op.
+   */
+  protected tryOpenEndedRange(
+    op: Operators,
+    node: AllParamTypes | null,
+  ): AllParamTypes | null {
+    if (!node) {
+      return null;
+    }
+    const afterOp = this.index;
+    let operand: AllParamTypes | null = null;
+    try {
+      operand = this.parseToken();
+    } catch {
+      // Whatever follows is not a token we can read; let the ordinary binary
+      // path run and report the real error rather than silently swallowing it.
+      operand = null;
+      this.index = afterOp;
+      return null;
+    }
+    this.index = afterOp;
+    return operand ? null : createUnaryExpression(op, node, false);
+  }
+
+  /**
    * Consume the precedence-0 postfix operators that can trail ANY operand of a
    * binary expression — the exists test (`x??`), the bare/binary default
    * operator (`x!` / `x!def`), and postfix update (`x++` / `x--`). These have no
@@ -317,6 +350,15 @@ export class ParamsParser extends AbstractTokenizer {
           this.index = defSave;
           node = createUnaryExpression(op, node, false);
         }
+      } else if (isRangeOp(op)) {
+        const open = this.tryOpenEndedRange(op as Operators, node);
+        if (!open) {
+          // A closed range — it has real precedence, so restore and let the
+          // caller's stack place it.
+          this.index = save;
+          break;
+        }
+        node = open;
       } else {
         // Not a precedence-0 postfix operator — restore and let the caller's
         // binary-precedence stack handle it (`?builtin`, `+`, `&&`, …).
@@ -354,12 +396,8 @@ export class ParamsParser extends AbstractTokenizer {
     //                         it is a binary expression. Prefix logical-NOT
     //                         (`!foo`) is consumed earlier by parseToken(), so
     //                         any `!` seen here is always the default operator.
-    while (
-      biop === Operators.PLUS_PLUS ||
-      biop === Operators.MINUS_MINUS ||
-      biop === Operators.EXISTS ||
-      biop === Operators.EXCLAM
-    ) {
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
       if (biop === Operators.EXCLAM) {
         const save = this.index;
         const def = this.parseToken();
@@ -369,8 +407,21 @@ export class ParamsParser extends AbstractTokenizer {
           this.index = save;
           left = createUnaryExpression(biop, left, false);
         }
-      } else {
+      } else if (
+        biop === Operators.PLUS_PLUS ||
+        biop === Operators.MINUS_MINUS ||
+        biop === Operators.EXISTS
+      ) {
         left = createUnaryExpression(biop, left, false);
+      } else if (isRangeOp(biop)) {
+        // `seq[5..]` — postfix here; a closed range falls through to the stack.
+        const open = this.tryOpenEndedRange(biop as Operators, left);
+        if (!open) {
+          break;
+        }
+        left = open;
+      } else {
+        break;
       }
       biop = this.parseBinaryOp();
     }
@@ -528,8 +579,12 @@ export class ParamsParser extends AbstractTokenizer {
       rawName += this.charAt(this.index++);
     }
 
-    if (this.charCodeAt(this.index) === ECharCodes.Period) {
-      // can start with a decimal marker
+    // A single `.` is a decimal marker; a doubled one starts the range operator
+    // (`1..3`) and belongs to the expression, not to this literal.
+    if (
+      this.charCodeAt(this.index) === ECharCodes.Period &&
+      this.charCodeAt(this.index + 1) !== ECharCodes.Period
+    ) {
       rawName += this.charAt(this.index++);
 
       while (isDecimalDigit(this.charCodeAt(this.index))) {
@@ -546,7 +601,12 @@ export class ParamsParser extends AbstractTokenizer {
         )})`,
         { start: this.index, end: this.index },
       );
-    } else if (chCode === ECharCodes.Period) {
+    } else if (
+      chCode === ECharCodes.Period &&
+      this.charCodeAt(this.index + 1) !== ECharCodes.Period
+    ) {
+      // A second decimal marker (`1.2.3`) is malformed; `1..3` / `1.2..5` is a
+      // range and its operator is left for parseBinaryOp().
       throw new ParseError('Unexpected period', {
         start: this.index,
         end: this.index,
@@ -713,6 +773,14 @@ export class ParamsParser extends AbstractTokenizer {
       chI === ECharCodes.OpenBracket ||
       chI === ECharCodes.OpenParenthesis
     ) {
+      // `start..end` is the range operator, not a member access on `start`.
+      // Leave it for parseBinaryOp().
+      if (
+        chI === ECharCodes.Period &&
+        this.charCodeAt(this.index + 1) === ECharCodes.Period
+      ) {
+        break;
+      }
       this.index++;
       if (chI === ECharCodes.Period) {
         this.parseSpaces();

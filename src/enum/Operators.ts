@@ -120,9 +120,29 @@ export const BinaryOps: Record<string, number> = {
   [Operators.DIVIDE]: 10,
   [Operators.PERCENT]: 10,
 
+  // Range operators: `0..9`, `0..<10` / `0..!10` (exclusive end), `0..*10`
+  // (length-based). Placed between additive (9) and relational (7), matching
+  // FreeMarker's own precedence table — so `0..n-1` is `0..(n-1)` and
+  // `a..b > c` is `(a..b) > c`. The open-ended form (`seq[5..]`) carries no
+  // right operand and is parsed as a postfix unary instead.
+  [Operators.DOT_DOT]: 8,
+  [Operators.DOT_DOT_LESS]: 8,
+  [Operators.DOT_DOT_NOT]: 8,
+  [Operators.DOT_DOT_ASTERISK]: 8,
+
   // Custom
   [Operators.BUILT_IN]: 11,
 } as const;
+
+/** True for any of the four range operators (`..`, `..<`, `..!`, `..*`). */
+export function isRangeOp(op: Operators | string | null): boolean {
+  return (
+    op === Operators.DOT_DOT ||
+    op === Operators.DOT_DOT_LESS ||
+    op === Operators.DOT_DOT_NOT ||
+    op === Operators.DOT_DOT_ASTERISK
+  );
+}
 
 // Get return the longest key length of any object
 export function getMaxKeyLength<T>(obj: T): number {
