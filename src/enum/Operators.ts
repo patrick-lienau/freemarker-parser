@@ -20,6 +20,7 @@ export enum Operators {
   MOD_EQUALS = '%=',
   PLUS_PLUS = '++',
   MINUS_MINUS = '--',
+  LAMBDA_ARROW = '->',
 
   ESCAPED_LT = 'lt',
   ESCAPED_LTE = 'lte',

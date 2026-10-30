@@ -118,6 +118,7 @@ console.log(data.tokens);
   - `?length`
   - `?string("yes", "no")`
 - support default values, i.e. `${user!"Anonymous"}`
+- local lambdas as built-in arguments, i.e. `xs?filter(x -> x.active)`, `xs?map((x) -> x.name)`
 
 ## TODO:
 

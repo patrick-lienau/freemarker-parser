@@ -90,6 +90,12 @@ export interface MapExpression extends Expression {
   elements: MapExpressionValues[];
 }
 
+export interface LambdaExpression extends Expression {
+  type: ParamNames.LambdaExpression;
+  params: Identifier[];
+  body: AllParamTypes;
+}
+
 export type AllParamTypes =
   | Literal
   | ArrayExpression
@@ -103,4 +109,5 @@ export type AllParamTypes =
   | Compound
   | AssignmentExpression
   | UpdateExpression
-  | MapExpression;
+  | MapExpression
+  | LambdaExpression;

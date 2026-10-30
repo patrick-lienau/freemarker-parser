@@ -12,4 +12,5 @@ export enum ParamNames {
   AssignmentExpression = 'AssignmentExpression',
   BuiltInExpression = 'BuiltInExpression',
   UpdateExpression = 'UpdateExpression',
+  LambdaExpression = 'LambdaExpression',
 }

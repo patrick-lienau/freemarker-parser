@@ -19,6 +19,7 @@ import {
   BuiltInExpression,
   CallExpression,
   Identifier,
+  LambdaExpression,
   Literal,
   LogicalExpression,
   MapExpression,
@@ -63,6 +64,8 @@ import {
 // - Default value: name!"unknown" or (user.name)!"unknown" or name! or (user.name)!
 // - Missing value test: name?? or (user.name)??
 // - Assignment operators: =, +=, -=, *=, /=, %=, ++, --
+// Local lambdas (only as a built-in argument):
+// - xs?filter(x -> x.active), xs?map((x) -> x.name)
 
 interface BiopInfo {
   value: Operators;
@@ -733,7 +736,10 @@ export class ParamsParser extends AbstractTokenizer {
         // between expressions
         this.index++;
       } else {
-        node = this.parseExpression();
+        node =
+          termination === ECharCodes.CloseParenthesis
+            ? this.parseLambda() ?? this.parseExpression()
+            : this.parseExpression();
         if (!node || node.type === ParamNames.Compound) {
           throw new ParseError('Expected comma', {
             start: this.index,
@@ -750,6 +756,61 @@ export class ParamsParser extends AbstractTokenizer {
       });
     }
     return args;
+  }
+
+  /**
+   * A local lambda, `x -> body` or `(x) -> body`. FreeMarker accepts one only
+   * as a call argument (of `?filter`, `?map`, `?take_while`, `?drop_while`), and
+   * only with a single parameter. The body is an ordinary expression, so it ends
+   * at the `,` or `)` that ends the argument.
+   *
+   * Returns `null` with the index restored when the argument is not a lambda.
+   */
+  protected parseLambda(): LambdaExpression | null {
+    const start = this.index;
+    const parenthesised =
+      this.charCodeAt(this.index) === ECharCodes.OpenParenthesis;
+    if (parenthesised) {
+      this.index++;
+      this.parseSpaces();
+    }
+
+    if (!isIdentifierStart(this.charCodeAt(this.index))) {
+      this.index = start;
+      return null;
+    }
+    const param = this.parseIdentifier();
+    this.parseSpaces();
+
+    if (parenthesised) {
+      if (this.charCodeAt(this.index) !== ECharCodes.CloseParenthesis) {
+        this.index = start;
+        return null;
+      }
+      this.index++;
+      this.parseSpaces();
+    }
+
+    if (
+      param.type !== ParamNames.Identifier ||
+      !this.template.startsWith(Operators.LAMBDA_ARROW, this.index)
+    ) {
+      this.index = start;
+      return null;
+    }
+    this.index += Operators.LAMBDA_ARROW.length;
+
+    const body = this.parseExpression();
+    if (!body) {
+      throw new ParseError(
+        `Expected expression after ${Operators.LAMBDA_ARROW}`,
+        {
+          start: this.index,
+          end: this.index,
+        },
+      );
+    }
+    return { type: ParamNames.LambdaExpression, params: [param], body };
   }
 
   /**
