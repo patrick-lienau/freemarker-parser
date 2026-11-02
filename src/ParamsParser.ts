@@ -141,6 +141,7 @@ function createBinaryExpression(
       return createBuiltInExpression(operator, left, right);
     case Operators.OR:
     case Operators.AND:
+    case Operators.ENTITY_AND:
       return { type: ParamNames.LogicalExpression, operator, left, right };
     default:
       return { type: ParamNames.BinaryExpression, operator, left, right };
@@ -547,15 +548,15 @@ export class ParamsParser extends AbstractTokenizer {
       return this.parseVariable();
     } else if (ch === ECharCodes.SingleQuote || ch === ECharCodes.DoubleQuote) {
       // Single or double quotes
-      return this.parseStringLiteral();
+      return this.parseMemberChain(this.parseStringLiteral());
     } else if (isIdentifierStart(ch) || ch === ECharCodes.OpenParenthesis) {
       // open parenthesis
       // `foo`, `bar.baz`
       return this.parseVariable();
     } else if (ch === ECharCodes.OpenBracket) {
-      return this.parseArray();
+      return this.parseMemberChain(this.parseArray());
     } else if (ch === ECharCodes.OpenBrace) {
-      return this.parseMap();
+      return this.parseMemberChain(this.parseMap());
     } else {
       let toCheck = this.template.substr(this.index, maxUnaryOps);
       let tcLen = toCheck.length;
@@ -791,24 +792,22 @@ export class ParamsParser extends AbstractTokenizer {
       this.parseSpaces();
     }
 
-    if (
-      param.type !== ParamNames.Identifier ||
-      !this.template.startsWith(Operators.LAMBDA_ARROW, this.index)
-    ) {
+    const arrow = [
+      Operators.LAMBDA_ARROW,
+      Operators.ENTITY_LAMBDA_ARROW,
+    ].find((a) => this.template.startsWith(a, this.index));
+    if (param.type !== ParamNames.Identifier || !arrow) {
       this.index = start;
       return null;
     }
-    this.index += Operators.LAMBDA_ARROW.length;
+    this.index += arrow.length;
 
     const body = this.parseExpression();
     if (!body) {
-      throw new ParseError(
-        `Expected expression after ${Operators.LAMBDA_ARROW}`,
-        {
-          start: this.index,
-          end: this.index,
-        },
-      );
+      throw new ParseError(`Expected expression after ${arrow}`, {
+        start: this.index,
+        end: this.index,
+      });
     }
     return { type: ParamNames.LambdaExpression, params: [param], body };
   }
@@ -820,15 +819,20 @@ export class ParamsParser extends AbstractTokenizer {
    * e.g. `Math.acos(obj.angle)`
    */
   protected parseVariable(): AllParamTypes | null {
-    let chI: number;
-    chI = this.charCodeAt(this.index);
-    let node: AllParamTypes | null =
-      chI === ECharCodes.OpenParenthesis
+    return this.parseMemberChain(
+      this.charCodeAt(this.index) === ECharCodes.OpenParenthesis
         ? this.parseGroup()
-        : this.parseIdentifier();
+        : this.parseIdentifier(),
+    );
+  }
 
+  /**
+   * Gobble the member accesses and calls trailing an operand: `.bar`,
+   * `["bar"]`, `(baz)`, in any number and order.
+   */
+  protected parseMemberChain(node: AllParamTypes | null): AllParamTypes | null {
     this.parseSpaces();
-    chI = this.charCodeAt(this.index);
+    let chI = this.charCodeAt(this.index);
     while (
       chI === ECharCodes.Period ||
       chI === ECharCodes.OpenBracket ||
@@ -917,9 +921,11 @@ export class ParamsParser extends AbstractTokenizer {
   }
 
   /**
-   * Responsible for parsing Map literals `[a: 1, b: 2, c: 3]`
+   * Responsible for parsing Map literals `{"a": 1, b: 2, c?c: 3}`
    * This function assumes that it needs to gobble the opening brace
    * and then tries to gobble the expressions as arguments.
+   * A key is any expression: FreeMarker evaluates it, so `{b: 2}` is keyed by
+   * the value of `b`, not by the string "b".
    */
   protected parseMap(): MapExpression {
     let ch: number;
@@ -937,15 +943,13 @@ export class ParamsParser extends AbstractTokenizer {
         break;
       }
 
-      if (ch !== ECharCodes.SingleQuote && ch !== ECharCodes.DoubleQuote) {
+      const key = this.parseExpression();
+      if (!key) {
         throw new ParseError(`Invalid character ${String.fromCharCode(ch)}`, {
           start: this.index,
           end: this.index,
         });
       }
-      const key = this.parseStringLiteral();
-
-      this.parseSpaces();
 
       ch = this.charCodeAt(this.index);
       if (ch !== ECharCodes.Colon) {

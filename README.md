@@ -119,6 +119,10 @@ console.log(data.tokens);
   - `?string("yes", "no")`
 - support default values, i.e. `${user!"Anonymous"}`
 - local lambdas as built-in arguments, i.e. `xs?filter(x -> x.active)`, `xs?map((x) -> x.name)`
+- hash literals with expression keys, i.e. `{node.id?c: node}`, `{personKey: true}`
+- member access on a literal, i.e. `{"h2": "h3"}[level]`, `["a", "b"][i]`, `"abc"[0]`
+- entity-spelled operators, i.e. `<#if n &gt; 0>`, `a &lt;= b`, `a &amp;&amp; b`, `x -&gt; x.y`
+- escaped quotes in strings inside a directive, i.e. `s?matches("src=\"([^\"]+)\"")`
 
 ## TODO:
 

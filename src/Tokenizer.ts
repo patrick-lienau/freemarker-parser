@@ -5,7 +5,7 @@ import ParseError from './errors/ParseError';
 import { Options } from './interface/Options';
 import { Token } from './interface/Tokens';
 import { NodeType, ParseSymbol } from './Symbols';
-import { isLetter, isWhitespace } from './utils/Chars';
+import { isIdentifierPart, isLetter, isWhitespace } from './utils/Chars';
 
 interface NextPos {
   pos: number;
@@ -341,6 +341,7 @@ export class Tokenizer extends AbstractTokenizer {
     const start = this.index;
     const stack: number[] = [];
     let closeCode: number | undefined;
+    let rawString = false;
 
     while (this.index <= this.length) {
       const ch = this.charCodeAt(this.index);
@@ -371,6 +372,9 @@ export class Tokenizer extends AbstractTokenizer {
               stack.push(closeCode);
             }
             closeCode = ch;
+            rawString =
+              this.charCodeAt(this.index - 1) === ECharCodes.r &&
+              !isIdentifierPart(this.charCodeAt(this.index - 2));
             break;
           case ECharCodes.OpenParenthesis: // (
             if (closeCode) {
@@ -397,6 +401,14 @@ export class Tokenizer extends AbstractTokenizer {
         }
       } else {
         switch (ch) {
+          case ECharCodes.Backslash: // \
+            // Take the escaped char now so an escaped quote cannot close the
+            // string. A raw string (`r"C:\"`) has no escapes.
+            if (!rawString) {
+              paramText += this.charAt(this.index);
+              ++this.index;
+            }
+            break;
           case ECharCodes.SingleQuote: // '
           case ECharCodes.DoubleQuote: // "
             if (closeCode === ch) {

@@ -21,14 +21,21 @@ export enum Operators {
   PLUS_PLUS = '++',
   MINUS_MINUS = '--',
   LAMBDA_ARROW = '->',
+  ENTITY_LAMBDA_ARROW = '-&gt;',
 
+  // FreeMarker also accepts the HTML-entity spellings, so a template stays
+  // well-formed markup: `<#if n &gt; 0>`.
   ESCAPED_LT = 'lt',
   ESCAPED_LTE = 'lte',
+  ENTITY_LT = '&lt;',
+  ENTITY_LTE = '&lt;=',
   NATURAL_LT = '<',
   NATURAL_LTE = '<=',
 
   ESCAPED_GT = 'gt',
   ESCAPED_GTE = 'gte',
+  ENTITY_GT = '&gt;',
+  ENTITY_GTE = '&gt;=',
   NATURAL_GT = '>',
   NATURAL_GTE = '>=',
 
@@ -40,6 +47,7 @@ export enum Operators {
   DIVIDE = '/',
   PERCENT = '%',
   AND = '&&',
+  ENTITY_AND = '&amp;&amp;',
   OR = '||',
   EXCLAM = '!',
   COMMA = ',',
@@ -98,6 +106,7 @@ export const BinaryOps: Record<string, number> = {
 
   // Logical AND
   [Operators.AND]: 2,
+  [Operators.ENTITY_AND]: 2,
 
   // Comparisons: equal and not equal
   [Operators.DOUBLE_EQUALS]: 6,
@@ -113,6 +122,11 @@ export const BinaryOps: Record<string, number> = {
   [Operators.ESCAPED_LT]: 7,
   [Operators.ESCAPED_GTE]: 7,
   [Operators.ESCAPED_LTE]: 7,
+
+  [Operators.ENTITY_GT]: 7,
+  [Operators.ENTITY_LT]: 7,
+  [Operators.ENTITY_GTE]: 7,
+  [Operators.ENTITY_LTE]: 7,
 
   // unary operators
   [Operators.PLUS]: 9,
